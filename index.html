@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Common Word Typer</title>
+
+  <!-- Bootstrap -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/bootstrap-theme.min.css" rel="stylesheet">
+
+  <!-- JQueryUI -->
+  <link href="css/jquery-ui.min.css" rel="stylesheet">
+  <link href="css/jquery-ui.theme.min.css" rel="stylesheet">
+
+
+  <link href="css/common.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Common Word Typer Experiment</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-3 col-md-6">
+
+        <h1>Common Word Typer</h1>
+
+        <p>
+          This is a program similar to the <a href="https://github.com/mortenjust/cleartext-mac" target="_blank">"Cleartext" app</a>, that makes you type with the 1000 most common English words.
+        </p>
+        <p>
+          The common word list is from the <a href="https://github.com/first20hours/google-10000-english" target="_blank">google-10000-english repository</a>.
+        </p>
+        <p>
+          Try to describe what you do!
+        </p>
+
+        <div class="form-group">
+          <label for="txtEditor">Good words:</label>
+          <textarea class="form-control" rows="10" id="txtEditor"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="lblBadWords">Bad words:</label>
+          <div id="lblBadWords"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="text-muted">Caleb Robinson, 2016</p>
+    </div>
+  </footer>
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+  <script type="text/javascript">
+
+    var allowTyping = false;
+    var wordList = [];
+    var oldText = "";
+    var badWords = [];
+
+    function isIn(needle,haystack){
+      for(var i=0;i<haystack.length;i++){
+        if(needle == haystack[i]) return true;
+      }
+      return false;
+    }
+
+    function cleanWord(word){
+      if(word.endsWith(".") || word.endsWith(",") || word.endsWith("?") || word.endsWith("!")){
+        word = word.substring(0, word.length - 1);
+      }
+      word = word.toLowerCase();
+      return word;
+    }
+
+    $(document).ready(function(){
+      console.debug("Starting application.");
+
+      //load the wordlist asynchronously, make sure that the user can't type anything while we do this
+      $.getJSON("words.json", function(json) {
+        console.debug("Loaded " + json.length + " words.");
+        wordList = json;
+        allowTyping = true;
+      });
+
+
+      $("#txtEditor").on("keyup", function(e) {
+
+          if(!allowTyping){
+            $(this).val("");
+          }else{
+            var currentText = $(this).val();
+            if(e.keyCode == 32){ // spacebar was pressed
+              var currentWords = currentText.trim().split(" ");
+
+              var wordToCheck = cleanWord(currentWords[currentWords.length-1]); //we check the last word when spacebar is pressed
+
+              if(!isIn(wordToCheck,wordList)){ //check to see if the word is in our allowed word list
+                $(this).val(oldText); //reset the text
+
+                //keep a running list of dissallowed words that the user has typed
+                if(!isIn(wordToCheck,badWords)){
+                  badWords.push(wordToCheck);
+                  $("#lblBadWords").append(document.createTextNode(" "+wordToCheck));
+                }
+              }else{
+                oldText = currentText;
+              }
+
+            }else if(currentText.length < oldText.length){ // we backspaced somehow
+
+              //find the last space in the current value and reset the history to use up to that point
+              lastSpaceLocation  = currentText.lastIndexOf(" ");
+              if(lastSpaceLocation==-1){
+                oldText = "";
+              }else{
+                oldText = currentText.slice(0,lastSpaceLocation+1);
+              }
+
+            }
+
+          }
+      });
+
+    });
+
+  </script>
+</body>
+
+</html>

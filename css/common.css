@@ -1,0 +1,44 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #FBFBFB;
+}
+
+body > .container {
+  padding: 80px 15px 0;
+}
+
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.navbar-color {
+  background-color: #F8F8F8;
+}
+
+.navbar-color .navbar-nav>.active>a, .personal-navbar .navbar-nav>.open>a {
+  background-image: -webkit-linear-gradient(top,#dbdbdb 0,#e2e2e2 100%);
+  background-image: -o-linear-gradient(top,#dbdbdb 0,#e2e2e2 100%);
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#dbdbdb),to(#e2e2e2));
+  background-image: linear-gradient(to bottom,#dbdbdb 0,#e2e2e2 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffdbdbdb', endColorstr='#ffe2e2e2', GradientType=0);
+  background-repeat: repeat-x;
+  -webkit-box-shadow: inset 0 3px 9px rgba(0,0,0,.075);
+  box-shadow: inset 0 3px 9px rgba(0,0,0,.075);
+}
